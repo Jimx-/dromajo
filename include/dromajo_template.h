@@ -1813,7 +1813,7 @@ int no_inline glue(riscv_cpu_interp, XLEN)(RISCVCPUState *s, int n_cycles) {
     } /* end of main loop */
 illegal_insn:
     s->pending_exception = CAUSE_ILLEGAL_INSTRUCTION;
-    s->pending_tval      = 0;
+    s->pending_tval      = insn;
 mmu_exception:
 exception:
     s->pc = GET_PC();
