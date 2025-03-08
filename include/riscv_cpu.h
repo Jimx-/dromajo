@@ -120,10 +120,6 @@ typedef uint128_t fp_uint;
 #undef ELEN
 #define ELEN ELEN_DEFAULT
 #endif
-#if (VLEN_MAX < VLEN || VLEN < ELEN || !IS_PO2(VLEN))
-#undef VLEN
-#define VLEN VLEN_DEFAULT
-#endif
 #if VLEN > 0
 #include "vector_template.h"
 #endif
