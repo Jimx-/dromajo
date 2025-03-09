@@ -52,6 +52,7 @@
 #define RAM_BASE_ADDR 0x80000000
 
 #define KERNEL_OFFSET 0x200000
+#define INITRD_OFFSET 0x20000000
 
 #ifndef FLEN
 #define FLEN 64

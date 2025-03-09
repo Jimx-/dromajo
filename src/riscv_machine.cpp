@@ -1039,13 +1039,17 @@ static int copy_kernel(RISCVMachine *s, uint8_t *fw_buf, size_t fw_buf_len, cons
 
     // load initrd into ram
     if (initrd_buf && initrd_buf_len) {
-        if (initrd_buf_len > s->ram_size) {
+        if (s->ram_size <= INITRD_OFFSET) {
+            vm_error("Can't load initrd at ram offset 0x%x\n", INITRD_OFFSET);
+            return 1;
+        }
+        if (initrd_buf_len > (s->ram_size - INITRD_OFFSET)) {
             vm_error("Initrd too big\n");
             return 1;
         }
-        initrd_end      = s->ram_base_addr + s->ram_size;
-        s->initrd_start = initrd_end - initrd_buf_len;
-        s->initrd_start = (s->initrd_start >> 12) << 12;
+        s->initrd_start = s->ram_base_addr + INITRD_OFFSET;
+        initrd_end = s->initrd_start + initrd_buf_len;
+        initrd_end = ((initrd_end + 0x1000 - 1) >> 12) << 12;
         memcpy(get_ram_ptr(s, s->initrd_start), initrd_buf, initrd_buf_len);
     }
 
