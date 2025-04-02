@@ -2285,6 +2285,15 @@ int riscv_read_insn(RISCVCPUState *s, uint32_t *insn, uint64_t addr) {
     int          saved_pending_exception = s->pending_exception;
     target_ulong saved_pending_tval      = s->pending_tval;
     int          res                     = target_read_insn_slow(s, insn, 32, addr);
+    if (res != 0 && (addr & 0xfff) == 0xffe) {
+        /* If pc is at the last two bytes from page end, assume it's
+           a compressed instruction and try again. */
+        res = target_read_insn_slow(s, insn, 16, addr);
+        if (res == 0 && (*insn & 3) == 3) {
+            /* Read succeeds, but insn is not a compressed one -- still a fault */
+            res = -1;
+        }
+    }
     s->pending_exception                 = saved_pending_exception;
     s->pending_tval                      = saved_pending_tval;
 
