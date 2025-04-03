@@ -101,10 +101,12 @@ static inline bool is_amo(uint32_t insn) {
 static inline bool is_mmio_load(RISCVCPUState *s, int reg, int offset, size_t size) {
     uint64_t pa;
     uint64_t va = riscv_get_reg_previous(s, reg) + offset;
+    PhysMemoryRange *pr;
 
     riscv_cpu_get_phys_addr(s, va, ACCESS_READ, &pa);
 
-    return riscv_cpu_pmp_access_ok(s, pa, size, PMPCFG_R) && !get_phys_mem_range(s->mem_map, pa);
+    pr = get_phys_mem_range(s->mem_map, pa);
+    return riscv_cpu_pmp_access_ok(s, pa, size, PMPCFG_R) && (!pr || !pr->is_ram);
 }
 
 /*
