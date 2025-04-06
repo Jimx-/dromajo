@@ -345,6 +345,7 @@ static uint32_t plic_read(void *opaque, uint32_t offset, int size_log2) {
                 plic_update_mip(s, hartid);
                 val = i;
             } else {
+                plic_update_mip(s, 0);
                 val = 0;
             }
         }
